@@ -63,7 +63,7 @@ public class LoginActivity extends MvpActivity<LoginViewInterface, LoginPresente
                     presenter.login();
                     break;
                 default:
-                    Log.d(TAG,"can't find any function for this view");
+                    Log.d(TAG,"can't find any function for that view");
             }
         }
     };
