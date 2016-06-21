@@ -7,14 +7,14 @@ import com.google.gson.annotations.SerializedName;
  */
 public class UserItem {
     @SerializedName("username")
-    String userName;
+    public String userName;
 
     @SerializedName("profile_pictrue")
-    String userImageURL;
+    public String userImageURL;
 
     @SerializedName("full_name")
-    String userFullName;
+    public String userFullName;
 
     @SerializedName("id")
-    int userID;
+    public int userID;
 }

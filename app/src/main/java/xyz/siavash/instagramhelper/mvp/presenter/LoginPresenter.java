@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import xyz.siavash.instagramhelper.R;
 import xyz.siavash.instagramhelper.mvp.presenter.interfaces.LoginPresenterInterface;
 import xyz.siavash.instagramhelper.mvp.ui.interfaces.LoginViewInterface;
+import xyz.siavash.instagramhelper.util.UserDataPreferences;
 
 /**
  * Created by siavash on 4/28/16.
@@ -28,22 +29,13 @@ public class LoginPresenter extends MvpBasePresenter<LoginViewInterface> impleme
 
     @Override
     public void login() {
-
-
-
-    }
-
-    public static boolean isEmailValid(String email) {
-        boolean isValid = false;
-
-        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
-        CharSequence inputStr = email;
-
-        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(inputStr);
-        if (matcher.matches()) {
-            isValid = true;
+        //// TODO: 6/21/16 getTokenFromInternet
+        UserDataPreferences.setToken("token");
+        if(isViewAttached()) {
+            getView().LoginSuccessful();
         }
-        return isValid;
+
+
     }
+
 }

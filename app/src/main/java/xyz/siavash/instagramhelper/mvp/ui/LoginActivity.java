@@ -71,7 +71,7 @@ public class LoginActivity extends MvpActivity<LoginViewInterface, LoginPresente
 
     @Override
     public void LoginSuccessful() {
-        startActivity(new Intent(this,NextPageActivity.class));
+        startActivity(new Intent(this,TabContainerActivity.class));
         finish();
     }
 
@@ -82,7 +82,7 @@ public class LoginActivity extends MvpActivity<LoginViewInterface, LoginPresente
     }
 
     @Override
-    public void setError(int errorResourceId) {
+    public void setErrorAndHideLoading(int errorResourceId) {
         loadingView.setVisibility(View.GONE);
         tvError.setText(errorResourceId);
         btnLogin.setClickable(true);

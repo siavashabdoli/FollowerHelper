@@ -19,7 +19,8 @@ public interface ApiService {
     /**
      * @param token obtain from Instagram api. Required.
      */
-    @GET("user/self/")
+    @GET("users/self/follows")
     Observable<UsersItem> myFollows(@Query("access_token") String token);
+
 
 }

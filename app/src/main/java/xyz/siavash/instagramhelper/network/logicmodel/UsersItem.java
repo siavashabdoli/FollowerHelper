@@ -9,5 +9,5 @@ import java.util.List;
  */
 public class UsersItem {
     @SerializedName("data")
-    List<UserItem> userItemList;
+    public List<UserItem> userItemList;
 }

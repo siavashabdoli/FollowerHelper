@@ -7,7 +7,7 @@ import com.hannesdorfmann.mosby.mvp.MvpView;
  */
 public interface LoginViewInterface extends MvpView {
 
-    public void LoginSuccessful();
-    public void showLoading();
-    public void setError(int errorResourceId);
+    void LoginSuccessful();
+    void showLoading();
+    void setErrorAndHideLoading(int errorResourceId);
 }
