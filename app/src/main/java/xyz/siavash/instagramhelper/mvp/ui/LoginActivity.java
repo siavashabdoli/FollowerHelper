@@ -48,6 +48,7 @@ public class LoginActivity extends MvpActivity<LoginViewInterface, LoginPresente
         ButterKnife.bind(this);
     }
 
+
     @Override
     protected void onResume() {
         super.onResume();

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="user_pic_width_percent">14</integer>
+    <integer name="user_text_width_percent">86</integer>
+</resources>

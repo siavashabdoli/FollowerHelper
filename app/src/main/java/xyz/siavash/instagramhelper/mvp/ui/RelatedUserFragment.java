@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +14,12 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
 import xyz.siavash.instagramhelper.R;
 import xyz.siavash.instagramhelper.mvp.presenter.RelatedUserPresenter;
 import xyz.siavash.instagramhelper.mvp.presenter.interfaces.RelatedUserPresenterInterface;
+import xyz.siavash.instagramhelper.mvp.ui.adapter.RelatedUserAdapter;
 import xyz.siavash.instagramhelper.mvp.ui.interfaces.RelatedUsersViewInterface;
 import xyz.siavash.instagramhelper.mvp.uimodel.UserObject;
 
@@ -26,13 +29,18 @@ import xyz.siavash.instagramhelper.mvp.uimodel.UserObject;
 
 public class RelatedUserFragment extends MvpLceFragment<SwipeRefreshLayout,List<UserObject>,RelatedUsersViewInterface,RelatedUserPresenterInterface>
         implements SwipeRefreshLayout.OnRefreshListener,RelatedUsersViewInterface {
+    @Bind(R.id.recyclerView)
+    RecyclerView recyclerView;
+
+    RelatedUserAdapter adapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_related,container,false);
-        Log.d("fragment","here1");
         ButterKnife.bind(this,view);
+        contentView.setOnRefreshListener(this);
+
         return view;
     }
 
