@@ -6,7 +6,6 @@ import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
