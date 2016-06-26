@@ -9,7 +9,7 @@ public class UserItem {
     @SerializedName("username")
     public String userName;
 
-    @SerializedName("profile_pictrue")
+    @SerializedName("profile_picture")
     public String userImageURL;
 
     @SerializedName("full_name")

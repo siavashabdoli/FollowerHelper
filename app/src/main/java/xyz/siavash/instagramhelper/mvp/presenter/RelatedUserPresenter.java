@@ -5,6 +5,7 @@ import android.util.Log;
 import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,14 +42,13 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
     public void loadUsers(final boolean pullToRefresh) {
         getView().showLoading(pullToRefresh);
         String token=UserDataPreferences.getToken();
-        Log.d("token","here:"+token);
         mSubscriptions.add(instaService.myFollows(token)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(new Func1<UsersItem, List<UserObject>>() {
                     @Override
                     public List<UserObject> call(UsersItem usersItem) {
-                        List<UserObject> userObjectList= Collections.emptyList();
+                        List<UserObject> userObjectList= new ArrayList<UserObject>();
                         for (UserItem userTemp :
                                 usersItem.userItemList) {
                             UserObject userObject=UserObject.createFromUserItem(userTemp,"test");
@@ -67,12 +67,13 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
                     @Override
                     public void onError(Throwable e) {
 
+                        e.printStackTrace();
 
                             if (e instanceof HttpException) {
                                 ResponseBody responseBody = ((HttpException) e).response().errorBody();
                                 if(responseBody!=null)
                                     try {
-                                        Log.d("yes",responseBody.string());
+                                        Log.d("error",responseBody.string());
                                     } catch (IOException e1) {
                                         e1.printStackTrace();
                                     }
@@ -83,7 +84,10 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
 
                     @Override
                     public void onNext(List<UserObject> userObjects) {
-                        Log.d("siavash","success");
+                        if(isViewAttached()){
+                            getView().setData(userObjects);
+                            getView().showContent();
+                        }
                     }
 
                 })

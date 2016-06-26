@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,8 +39,6 @@ public class RelatedUserFragment extends MvpLceFragment<SwipeRefreshLayout,List<
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_user_related,container,false);
-        ButterKnife.bind(this,view);
-        contentView.setOnRefreshListener(this);
 
         return view;
     }
@@ -47,12 +46,17 @@ public class RelatedUserFragment extends MvpLceFragment<SwipeRefreshLayout,List<
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(this,view);
+        contentView.setOnRefreshListener(this);
+        adapter=new RelatedUserAdapter(getActivity());
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(adapter);
         loadData(false);
     }
 
     @Override
     public void onRefresh() {
-
+        loadData(true);
     }
 
     @Override
@@ -68,11 +72,21 @@ public class RelatedUserFragment extends MvpLceFragment<SwipeRefreshLayout,List<
 
     @Override
     public void setData(List<UserObject> data) {
-
+        adapter.setData(data);
     }
 
     @Override
     public void loadData(boolean pullToRefresh) {
         presenter.loadUsers(pullToRefresh);
+    }
+
+    @Override
+    public void showContent() {
+        super.showContent();
+        contentView.setRefreshing(false);
+    }
+    @Override public void showError(Throwable e, boolean pullToRefresh) {
+        super.showError(e, pullToRefresh);
+        contentView.setRefreshing(false);
     }
 }
