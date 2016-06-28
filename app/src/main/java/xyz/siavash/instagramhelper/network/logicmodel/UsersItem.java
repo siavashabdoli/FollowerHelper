@@ -2,6 +2,7 @@ package xyz.siavash.instagramhelper.network.logicmodel;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -9,5 +10,5 @@ import java.util.List;
  */
 public class UsersItem {
     @SerializedName("data")
-    public List<UserItem> userItemList;
+    public ArrayList<UserItem> userItemList;
 }

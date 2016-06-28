@@ -6,13 +6,15 @@ import com.hannesdorfmann.mosby.mvp.MvpBasePresenter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.adapter.rxjava.HttpException;
+import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
+import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 import xyz.siavash.instagramhelper.mvp.presenter.interfaces.RelatedUserPresenterInterface;
@@ -23,6 +25,7 @@ import xyz.siavash.instagramhelper.network.ApiService;
 import xyz.siavash.instagramhelper.network.logicmodel.UserItem;
 import xyz.siavash.instagramhelper.network.logicmodel.UsersItem;
 import xyz.siavash.instagramhelper.util.UserDataPreferences;
+import xyz.siavash.instagramhelper.util.UserSortComprator;
 
 /**
  * Created by siavash on 6/19/16.
@@ -41,22 +44,56 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
     public void loadUsers(final boolean pullToRefresh) {
         getView().showLoading(pullToRefresh);
         String token=UserDataPreferences.getToken();
-        mSubscriptions.add(instaService.myFollows(token)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<UsersItem, List<UserObject>>() {
-                    @Override
-                    public List<UserObject> call(UsersItem usersItem) {
-                        List<UserObject> userObjectList= new ArrayList<UserObject>();
-                        for (UserItem userTemp :
-                                usersItem.userItemList) {
-                            UserObject userObject=UserObject.createFromUserItem(userTemp,"test");
+        Observable<UsersItem> followsObservable = instaService
+                .myFollows(token)
+                .observeOn(AndroidSchedulers.mainThread());
+        Observable<UsersItem> followersObservable = instaService
+                .myFollowers(token)
+                .observeOn(AndroidSchedulers.mainThread());
+        Observable<List<UserObject>> combined = Observable.zip(followsObservable, followersObservable, new Func2<UsersItem, UsersItem, List<UserObject>>() {
+            @Override
+            public List<UserObject> call(UsersItem followings, UsersItem followers) {
+                List<UserObject> userObjectList= new ArrayList<UserObject>();
+                Collections.sort(followings.userItemList,new UserSortComprator());
+                Collections.sort(followers.userItemList,new UserSortComprator());
+                int followingIndex=0;
+                        for (UserItem followerUser :
+                                followers.userItemList) {
+                            UserObject userObject;
+
+                            if(followingIndex<followings.userItemList.size()) {
+                                UserItem followingUser=followings.userItemList.get(followingIndex);
+                                while (followerUser.userName.compareTo(followingUser.userName)>0
+                                        && followingIndex<followings.userItemList.size()){
+
+                                    userObjectList.add(UserObject.createFromUserItem(followingUser,"following"));
+                                    followingIndex++;
+                                    followingUser=followings.userItemList.get(followingIndex);
+
+                                }
+                                    if (followerUser.userID == followingUser.userID) {
+                                        userObject = UserObject.createFromUserItem(followerUser, "friend");
+                                        followingIndex++;
+                                    } else{
+                                        userObject = UserObject.createFromUserItem(followerUser, "follower");
+                                    }
+
+                            }else {
+                                userObject=UserObject.createFromUserItem(followerUser,"follower");
+                            }
+
+
+
+
                             userObjectList.add(userObject);
 
                         }
-                        return userObjectList;
-                    }
-                })
+                return userObjectList;
+            }
+        });
+        mSubscriptions.add(combined
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<UserObject>>() {
                     @Override
                     public void onCompleted() {
@@ -68,16 +105,16 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
 
                         e.printStackTrace();
 
-                            if (e instanceof HttpException) {
-                                ResponseBody responseBody = ((HttpException) e).response().errorBody();
-                                if(responseBody!=null)
-                                    try {
-                                        Log.d("error",responseBody.string());
-                                    } catch (IOException e1) {
-                                        e1.printStackTrace();
-                                    }
+                        if (e instanceof HttpException) {
+                            ResponseBody responseBody = ((HttpException) e).response().errorBody();
+                            if(responseBody!=null)
+                                try {
+                                    Log.d("error",responseBody.string());
+                                } catch (IOException e1) {
+                                    e1.printStackTrace();
+                                }
 
-                            }
+                        }
 
                     }
 
@@ -90,8 +127,8 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
                     }
 
                 })
-
         );
+
     }
 
     @Override

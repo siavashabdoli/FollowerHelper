@@ -22,5 +22,7 @@ public interface ApiService {
     @GET("users/self/follows")
     Observable<UsersItem> myFollows(@Query("access_token") String token);
 
+    @GET("users/self/followed-by")
+    Observable<UsersItem> myFollowers(@Query("access_token") String token);
 
 }

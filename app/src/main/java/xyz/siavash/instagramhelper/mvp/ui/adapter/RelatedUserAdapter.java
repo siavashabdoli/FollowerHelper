@@ -2,7 +2,6 @@ package xyz.siavash.instagramhelper.mvp.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,6 @@ public class RelatedUserAdapter extends RecyclerView.Adapter<RelatedUserAdapter.
 
         holder.textUserName.setText(mUserObjectList.get(position).userName);
         holder.textRelation.setText(mUserObjectList.get(position).followingState);
-        Log.d("siavash",mUserObjectList.get(position).imageAddress);
         Picasso.with(this.mContext).load(mUserObjectList.get(position).imageAddress)
                 .transform(new CircleTransform())
                 .into(holder.imageView);
