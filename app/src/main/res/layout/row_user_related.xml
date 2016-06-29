@@ -3,20 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:weightSum="100"
     android:orientation="horizontal"
     android:layoutDirection="ltr"
     tools:ignore="UnusedAttribute">
-
-    <ImageView
+    <android.support.percent.PercentFrameLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="@integer/user_pic_width_percent"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
-        android:adjustViewBounds="true"
-        android:id="@+id/row_user_image"
-        android:contentDescription="@string/user_image" />
+        android:layout_gravity="center_vertical">
+        <FrameLayout
+            app:layout_widthPercent="100%"
+            app:layout_aspectRatio="100%">
+        <ImageView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:adjustViewBounds="true"
+            android:id="@+id/row_user_image"
+            android:contentDescription="@string/user_image" />
+        </FrameLayout>
+    </android.support.percent.PercentFrameLayout>
+
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
