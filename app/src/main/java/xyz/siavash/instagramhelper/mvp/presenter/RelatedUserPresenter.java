@@ -14,6 +14,7 @@ import retrofit2.adapter.rxjava.HttpException;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func0;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -44,13 +45,16 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
     public void loadUsers(final boolean pullToRefresh) {
         getView().showLoading(pullToRefresh);
         String token=UserDataPreferences.getToken();
-        Observable<UsersItem> followsObservable = instaService
-                .myFollows(token)
-                .observeOn(AndroidSchedulers.mainThread());
         Observable<UsersItem> followersObservable = instaService
                 .myFollowers(token)
-                .observeOn(AndroidSchedulers.mainThread());
-        Observable<List<UserObject>> combined = Observable.zip(followsObservable, followersObservable, new Func2<UsersItem, UsersItem, List<UserObject>>() {
+                .subscribeOn(Schedulers.newThread());
+        Observable<UsersItem> followsObservable = instaService
+                .myFollows(token)
+                .subscribeOn(Schedulers.newThread());
+        Observable<List<UserObject>> combined = Observable.zip(
+                followsObservable,
+                followersObservable,
+                 new Func2<UsersItem, UsersItem, List<UserObject>>() {
             @Override
             public List<UserObject> call(UsersItem followings, UsersItem followers) {
                 List<UserObject> userObjectList= new ArrayList<UserObject>();
@@ -91,6 +95,7 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
                 return userObjectList;
             }
         });
+
         mSubscriptions.add(combined
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -114,6 +119,9 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
                                     e1.printStackTrace();
                                 }
 
+                        }
+                        if(isViewAttached()){
+                            getView().showError(e,pullToRefresh);
                         }
 
                     }
@@ -139,5 +147,6 @@ public class RelatedUserPresenter extends MvpBasePresenter<RelatedUsersViewInter
     @Override
     public void detachView(boolean retainInstance) {
         super.detachView(retainInstance);
+        mSubscriptions.clear();
     }
 }
