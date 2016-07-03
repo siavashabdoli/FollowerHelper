@@ -38,8 +38,7 @@ public class ApiProvider {
                         requestBuilder.addHeader("Accept", "application/json");
 
                         requestBuilder.method(original.method(), original.body());
-                        Request request = requestBuilder.build();
-                        return chain.proceed(request);
+                        Request request = requestBuilder.build();return chain.proceed(request);
 
                     }
                 })

@@ -21,6 +21,9 @@ android {
             variant.buildConfigField "String", "CLIENT_SECRET","\""+getClientSecret()+"\""
         }
     }
+    defaultConfig{
+        multiDexEnabled true
+    }
 }
 
 dependencies {
@@ -45,6 +48,10 @@ dependencies {
     compile 'com.hannesdorfmann.mosby:viewstate:2.0.1'
     compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
     compile 'com.jakewharton:butterknife:7.0.1'
+
+    compile 'com.google.android.gms:play-services:9.0.0'
+    compile 'com.google.firebase:firebase-core:9.0.0'
+    compile 'com.google.firebase:firebase-messaging:9.0.0'
 }
 def getClientID(){
     def Properties props = new Properties()
@@ -56,3 +63,4 @@ def getClientSecret(){
     props.load(new FileInputStream(new File('secrets.properties')))
     return props['CLIENT_SECRET']
 }
+apply plugin: 'com.google.gms.google-services'
